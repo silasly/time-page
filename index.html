@@ -3,35 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Die Zeit</title>
+    <title>Time</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background-color: #121212;
+            background: #0a0a0b;
             color: #ffffff;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
         }
-        #clock {
-            font-size: 4rem;
-            letter-spacing: 0.1em;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+
+        .clock-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time {
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .seconds {
+            font-weight: 300;
+            opacity: 0.6;
+        }
+
+        .date {
+            font-size: clamp(0.875rem, 2vw, 1.125rem);
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 1.5rem;
+        }
+
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .divider {
+            width: 1px;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            transition: height 0.3s ease;
+        }
+
+        body:hover .divider {
+            height: 60px;
         }
     </style>
 </head>
 <body>
-    <div id="clock">00:00:00</div>
+    <div class="clock-container">
+        <div class="glow"></div>
+        <div class="time">
+            <span id="hours">00</span>:<span id="minutes">00</span><span class="seconds" id="seconds">:00</span>
+        </div>
+        <div class="date" id="date"></div>
+    </div>
+
     <script>
         function updateTime() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('en-GB');
-            document.getElementById('clock').textContent = timeString;
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = ':' + seconds;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
         }
-        setInterval(updateTime, 1000);
+
         updateTime();
+        setInterval(updateTime, 1000);
     </script>
 </body>
 </html>
